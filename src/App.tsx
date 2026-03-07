@@ -10,7 +10,7 @@ type Page = 'login' | 'dashboard' | 'help' | 'developer';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<Page>('login');
-  const { deviceState, connect, disconnect, togglePower, triggerClick, setThreshold } = useBluetooth();
+  const { deviceState, connect, disconnect, togglePower, triggerClick } = useBluetooth();
 
   const handleLogin = () => setCurrentPage('dashboard');
   const handleLogout = () => setCurrentPage('login');
@@ -46,7 +46,6 @@ export default function App() {
             onConnect={connect}
             onDisconnect={disconnect}
             onTriggerClick={triggerClick}
-            onSetThreshold={setThreshold}
           />
         )}
         {currentPage === 'help' && <Help />}
