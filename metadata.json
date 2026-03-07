@@ -1,0 +1,7 @@
+{
+  "name": "JOLT",
+  "description": "A web platform for managing 3D spatial movement devices, featuring Bluetooth connectivity, device status monitoring, and cursor translation.",
+  "requestFramePermissions": [
+    "bluetooth"
+  ]
+}
