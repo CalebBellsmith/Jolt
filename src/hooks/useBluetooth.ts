@@ -42,6 +42,8 @@ export function useBluetooth() {
 
       const device = await navigator.bluetooth.requestDevice({
         filters: [{ services: [SERVICE_UUID] }],
+        //optionalServices: [SERVICE_UUID],
+        acceptAllDevices: true,
         optionalServices: [SERVICE_UUID],
       });
 
