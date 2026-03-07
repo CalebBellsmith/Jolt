@@ -11,7 +11,6 @@ interface DashboardProps {
   onConnect: () => void;
   onDisconnect: () => void;
   onTriggerClick?: () => void;
-  onSetThreshold?: (value: number) => void;
 }
 
 export const Dashboard: React.FC<DashboardProps> = ({
@@ -20,10 +19,8 @@ export const Dashboard: React.FC<DashboardProps> = ({
   onConnect,
   onDisconnect,
   onTriggerClick,
-  onSetThreshold,
 }) => {
   const [selectedPart, setSelectedPart] = useState('bicep');
-  const [threshold, setThresholdLocal] = useState(2500);
 
   const bodyParts = [
     { id: 'default', label: 'Select as default' },
@@ -32,16 +29,6 @@ export const Dashboard: React.FC<DashboardProps> = ({
     { id: 'calf',    label: 'Calf' },
     { id: 'thigh',   label: 'Thigh' },
   ];
-
-  const handleThresholdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = parseInt(e.target.value);
-    setThresholdLocal(val);
-    onSetThreshold?.(val);
-  };
-
-  // Normalize EMG value to percentage for display
-  const emgPercent = Math.min(100, Math.round((deviceState.emgValue / 4095) * 100));
-  const emgExceedsThreshold = deviceState.emgValue > threshold;
 
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-16">
@@ -76,7 +63,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
               {deviceState.baselineSet ? 'SET' : 'NOT SET'}
             </p>
             <p className="mt-4 text-[10px] text-[#000066]/60 italic">
-              Press button on device to zero IMU
+              Double click device button to zero IMU
             </p>
           </div>
         </div>
@@ -142,40 +129,70 @@ export const Dashboard: React.FC<DashboardProps> = ({
         </div>
       </div>
 
-      {/* EMG Monitor Panel */}
+      {/* Last Event Panel */}
       <div className="p-8 bg-[#000066] rounded-[40px] shadow-2xl relative overflow-hidden">
         <div className="absolute inset-0 opacity-5 pointer-events-none">
           <div className="w-full h-full" style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
         </div>
-
         <div className="relative z-10 space-y-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Activity className="w-5 h-5 text-blue-300" />
-              <p className="text-blue-200/60 text-[10px] font-mono uppercase tracking-[0.4em]">EMG Signal Monitor</p>
+              <p className="text-blue-200/60 text-[10px] font-mono uppercase tracking-[0.4em]">Device Events</p>
             </div>
-            <div className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${emgExceedsThreshold ? 'bg-green-500 text-white' : 'bg-white/10 text-white/40'}`}>
-              {emgExceedsThreshold ? 'CLICK DETECTED' : 'Monitoring'}
-            </div>
-          </div>
-
-          {/* Live bar */}
-          <div className="space-y-2">
-            <div className="flex justify-between text-[10px] font-mono text-white/40">
-              <span>0</span>
-              <span>Raw: {deviceState.emgValue}</span>
-              <span>4095</span>
-            </div>
-            <div className="w-full h-4 bg-white/10 rounded-full overflow-hidden">
-              <motion.div
-                className={`h-full rounded-full transition-colors ${emgExceedsThreshold ? 'bg-green-400' : 'bg-blue-400'}`}
-                animate={{ width: `${emgPercent}%` }}
-                transition={{ type: 'spring', damping: 20, stiffness: 200 }}
-              />
+            <div className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${deviceState.lastEvent ? 'bg-green-500 text-white' : 'bg-white/10 text-white/40'}`}>
+              {deviceState.lastEvent ?? 'Waiting'}
             </div>
           </div>
 
-          {/* Scrolling history graph */}
-          <div className="w-full h-24 bg-white/5 rounded-2xl overflow-hidden flex items-end gap-px px-2 py-2">
-            {deviceState.emgHistory.length === 0 ? (
-              <p className="text-white/20 text-[10px] font-mono m-a
+          <div className="flex items-center justify-center py-4">
+            <p className="text-white/30 text-sm font-mono">
+              {deviceState.connected
+                ? 'Single click = mouse click, Double click = zero IMU'
+                : 'Connect device to see events'}
+            </p>
+          </div>
+
+          <div className="flex justify-center pt-2">
+            <button
+              onClick={onTriggerClick}
+              disabled={!deviceState.connected}
+              className="px-6 py-2 bg-white/10 hover:bg-white/20 disabled:opacity-30 disabled:cursor-not-allowed text-white text-xs font-bold uppercase tracking-widest rounded-full transition-all"
+            >
+              Test Click Manually
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Spatial Movement Panel */}
+      <div className="p-10 bg-[#000066] rounded-[40px] shadow-2xl relative overflow-hidden min-h-[250px] flex items-center justify-center">
+        <div className="absolute inset-0 opacity-5 pointer-events-none">
+          <div className="w-full h-full" style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+        </div>
+        <div className="text-center z-10">
+          <p className="text-blue-200/40 text-[10px] font-mono uppercase tracking-[0.4em] mb-6">Spatial Movement Translation</p>
+          <div className="flex items-center justify-center gap-12">
+            <div className="text-left">
+              <p className="text-blue-300/30 text-[9px] uppercase font-bold tracking-widest">X-Axis</p>
+              <p className="text-white font-mono text-3xl font-light">{deviceState.movement.x.toFixed(2)}</p>
+            </div>
+            <div className="w-px h-12 bg-white/10" />
+            <div className="text-left">
+              <p className="text-blue-300/30 text-[9px] uppercase font-bold tracking-widest">Y-Axis</p>
+              <p className="text-white font-mono text-3xl font-light">{deviceState.movement.y.toFixed(2)}</p>
+            </div>
+          </div>
+          <p className="mt-8 text-[10px] text-blue-200/30 max-w-[250px] mx-auto leading-relaxed">
+            * Real-time spatial data is translated into 2D coordinates for virtual cursor control.
+          </p>
+        </div>
+        <motion.div
+          animate={{ x: deviceState.movement.x, y: deviceState.movement.y }}
+          transition={{ type: 'spring', damping: 25, stiffness: 120 }}
+          className="absolute w-6 h-6 bg-white rounded-full shadow-[0_0_30px_rgba(255,255,255,0.4)] border-2 border-blue-200 pointer-events-none"
+        />
+      </div>
+    </div>
+  );
+};
