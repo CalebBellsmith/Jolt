@@ -10,36 +10,19 @@ type Page = 'login' | 'dashboard' | 'help' | 'developer';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<Page>('login');
-  const { deviceState, connect, disconnect, togglePower } = useBluetooth();
+  const { deviceState, connect, disconnect, togglePower, triggerClick, setThreshold } = useBluetooth();
 
-  const handleLogin = () => {
-    setCurrentPage('dashboard');
-  };
-
-  const handleLogout = () => {
-    setCurrentPage('login');
-  };
-
-  const handleHelpClick = () => {
-    setCurrentPage('help');
-  };
-
-  const handleDeveloperClick = () => {
-    setCurrentPage('developer');
-  };
-
-  const handleAccountClick = () => {
-    // Account info is handled within the Header component's dropdown
-  };
-
-  const handleHomeClick = () => {
-    setCurrentPage('dashboard');
-  };
+  const handleLogin = () => setCurrentPage('dashboard');
+  const handleLogout = () => setCurrentPage('login');
+  const handleHelpClick = () => setCurrentPage('help');
+  const handleDeveloperClick = () => setCurrentPage('developer');
+  const handleAccountClick = () => {};
+  const handleHomeClick = () => setCurrentPage('dashboard');
 
   return (
     <div className="min-h-screen bg-zinc-50 font-sans selection:bg-blue-100 selection:text-blue-900">
       {currentPage !== 'login' && currentPage !== 'developer' && (
-        <Header 
+        <Header
           title={currentPage === 'help' ? 'Help' : 'JOLT'}
           onHelpClick={handleHelpClick}
           onAccountClick={handleAccountClick}
@@ -49,20 +32,21 @@ export default function App() {
           user={{ name: 'Bella Groten', email: 'BellaGroten@gmail.com' }}
         />
       )}
-
       <main>
         {currentPage === 'login' && (
-          <Login 
-            onLogin={handleLogin} 
+          <Login
+            onLogin={handleLogin}
             onDeveloperClick={handleDeveloperClick}
           />
         )}
         {currentPage === 'dashboard' && (
-          <Dashboard 
+          <Dashboard
             deviceState={deviceState}
             onTogglePower={togglePower}
             onConnect={connect}
             onDisconnect={disconnect}
+            onTriggerClick={triggerClick}
+            onSetThreshold={setThreshold}
           />
         )}
         {currentPage === 'help' && <Help />}
@@ -70,17 +54,13 @@ export default function App() {
           <DeveloperPage onBack={() => setCurrentPage('login')} />
         )}
       </main>
-
-      {/* Footer / Status Bar (Optional) */}
       {currentPage !== 'login' && currentPage !== 'developer' && (
         <footer className="fixed bottom-0 left-0 right-0 h-8 bg-white border-t border-zinc-200 flex items-center justify-between px-4 text-[10px] text-zinc-400 uppercase tracking-widest z-40">
           <div className="flex items-center gap-4">
             <span>Status: <span className={deviceState.connected ? 'text-green-500' : 'text-zinc-300'}>{deviceState.connected ? 'Active' : 'Idle'}</span></span>
             <span>Firmware: v1.0.4</span>
           </div>
-          <div>
-            © 2026 JOLT Technologies
-          </div>
+          <div>© 2026 JOLT Technologies</div>
         </footer>
       )}
     </div>
