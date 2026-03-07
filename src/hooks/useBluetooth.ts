@@ -81,7 +81,7 @@ export function useBluetooth() {
         }
       });
 
-      // Click characteristic: web app can write to this to trigger clicks
+      // Click characteristic: web app writes to this to trigger clicks
       clickCharRef.current = await service.getCharacteristic(CLICK_CHAR_UUID);
 
       setDeviceState(prev => ({
