@@ -50,7 +50,13 @@ export function useBluetooth() {
       setError(null);
 
       const device = await navigator.bluetooth.requestDevice({
-        acceptAllDevices: true,
+        // Show all named devices, filter out unnamed/unknown ones
+        filters: [
+          { namePrefix: 'EMG' },
+          { namePrefix: 'JOLT' },
+          { namePrefix: 'Bluetooth' },
+          { services: [SERVICE_UUID] },
+        ],
         optionalServices: [SERVICE_UUID],
       });
 
@@ -94,7 +100,7 @@ export function useBluetooth() {
         console.warn('Click characteristic not found, skipping');
       }
 
-      // IMU characteristic: parses "pitch,roll,yaw" string
+      // IMU characteristic
       try {
         const imuChar = await service.getCharacteristic(IMU_CHAR_UUID);
         await imuChar.startNotifications();
