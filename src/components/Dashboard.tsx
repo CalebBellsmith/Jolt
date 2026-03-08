@@ -203,7 +203,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 step={1}
                 value={sensitivity}
                 onChange={(e) => handleSensitivityChange(Number(e.target.value))}
-                disabled={!deviceState.connected}
+                disabled={!deviceState.powerOn}
                 className="flex-1 h-2 appearance-none rounded-full cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
                 style={{
                   background: `linear-gradient(to right, #3b82f6 ${(sensitivity - 1) / 9 * 100}%, rgba(255,255,255,0.1) ${(sensitivity - 1) / 9 * 100}%)`,
