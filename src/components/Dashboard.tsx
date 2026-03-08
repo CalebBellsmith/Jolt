@@ -140,44 +140,43 @@ export const Dashboard: React.FC<DashboardProps> = ({
         </div>
       </div>
 
-      {/* IMU Live Data Panel */}
-      <div className="p-8 bg-[#000066] rounded-[40px] shadow-2xl relative overflow-hidden">
-        <div className="absolute inset-0 opacity-5 pointer-events-none">
-          <div className="w-full h-full" style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
-        </div>
-        <div className="relative z-10 space-y-6">
-          <div className="flex items-center gap-3">
-            <Compass className="w-5 h-5 text-blue-300" />
-            <p className="text-blue-200/60 text-[10px] font-mono uppercase tracking-[0.4em]">Live IMU Angles</p>
-            <div className={`ml-auto px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${deviceState.connected ? 'bg-green-500 text-white' : 'bg-white/10 text-white/40'}`}>
-              {deviceState.connected ? 'Live' : 'Offline'}
-            </div>
-          </div>
-          <div className="grid grid-cols-3 gap-6">
-            {[
-              { label: 'Pitch', value: deviceState.imu.pitch, color: 'text-blue-300' },
-              { label: 'Roll',  value: deviceState.imu.roll,  color: 'text-purple-300' },
-              { label: 'Yaw',   value: deviceState.imu.yaw,   color: 'text-cyan-300' },
-            ].map(({ label, value, color }) => (
-              <div key={label} className="flex flex-col items-center gap-2">
-                <p className={`text-[9px] uppercase font-bold tracking-widest ${color} opacity-60`}>{label}</p>
-                <p className={`font-mono text-3xl font-light ${color}`}>
-                  {value.toFixed(1)}°
-                </p>
-                <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
-                  <div
-                    className={`h-full rounded-full transition-all duration-100 ${color.replace('text-', 'bg-')}`}
-                    style={{
-                      width: `${Math.min(100, Math.abs(value) / 90 * 100)}%`,
-                      marginLeft: value < 0 ? 'auto' : undefined,
-                    }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+    {/* IMU Live Data Panel */}
+<div className="p-8 bg-[#000066] rounded-[40px] shadow-2xl relative overflow-hidden">
+  <div className="absolute inset-0 opacity-5 pointer-events-none">
+    <div className="w-full h-full" style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+  </div>
+  <div className="relative z-10 space-y-6">
+    <div className="flex items-center gap-3">
+      <Compass className="w-5 h-5 text-blue-300" />
+      <p className="text-blue-200/60 text-[10px] font-mono uppercase tracking-[0.4em]">Live Position</p>
+      <div className={`ml-auto px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${deviceState.connected ? 'bg-green-500 text-white' : 'bg-white/10 text-white/40'}`}>
+        {deviceState.connected ? 'Live' : 'Offline'}
       </div>
+    </div>
+    <div className="grid grid-cols-2 gap-6">
+      {[
+        { label: 'X', value: deviceState.imu.roll,  color: 'text-blue-300' },
+        { label: 'Y', value: deviceState.imu.pitch, color: 'text-purple-300' },
+      ].map(({ label, value, color }) => (
+        <div key={label} className="flex flex-col items-center gap-2">
+          <p className={`text-[9px] uppercase font-bold tracking-widest ${color} opacity-60`}>{label}</p>
+          <p className={`font-mono text-3xl font-light ${color}`}>
+            {value.toFixed(1)}°
+          </p>
+          <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
+            <div
+              className={`h-full rounded-full transition-all duration-100 ${color.replace('text-', 'bg-')}`}
+              style={{
+                width: `${Math.min(100, Math.abs(value) / 90 * 100)}%`,
+                marginLeft: value < 0 ? 'auto' : undefined,
+              }}
+            />
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</div>
 
       {/* Sensitivity Panel */}
       <div className="p-8 bg-[#000066] rounded-[40px] shadow-2xl relative overflow-hidden">
