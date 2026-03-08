@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { Bluetooth, Battery, Power, Target, ChevronDown, User, Activity } from 'lucide-react';
+import { Bluetooth, Battery, Power, Target, ChevronDown, User, Activity, Compass } from 'lucide-react';
 import { HumanOutline } from './HumanOutline';
 import { BluetoothDeviceState } from '../hooks/useBluetooth';
 import { Logo } from './Logo';
@@ -29,6 +29,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
     { id: 'calf',    label: 'Calf' },
     { id: 'thigh',   label: 'Thigh' },
   ];
+
+  // Clamp dot position to stay within the panel
+  const dotX = Math.max(-80, Math.min(80, deviceState.imu.roll  * 1.5));
+  const dotY = Math.max(-80, Math.min(80, deviceState.imu.pitch * 1.5));
 
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-16">
@@ -129,6 +133,46 @@ export const Dashboard: React.FC<DashboardProps> = ({
         </div>
       </div>
 
+      {/* IMU Live Data Panel */}
+      <div className="p-8 bg-[#000066] rounded-[40px] shadow-2xl relative overflow-hidden">
+        <div className="absolute inset-0 opacity-5 pointer-events-none">
+          <div className="w-full h-full" style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+        </div>
+        <div className="relative z-10 space-y-6">
+          <div className="flex items-center gap-3">
+            <Compass className="w-5 h-5 text-blue-300" />
+            <p className="text-blue-200/60 text-[10px] font-mono uppercase tracking-[0.4em]">Live IMU Angles</p>
+            <div className={`ml-auto px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${deviceState.connected ? 'bg-green-500 text-white' : 'bg-white/10 text-white/40'}`}>
+              {deviceState.connected ? 'Live' : 'Offline'}
+            </div>
+          </div>
+          <div className="grid grid-cols-3 gap-6">
+            {[
+              { label: 'Pitch', value: deviceState.imu.pitch, color: 'text-blue-300' },
+              { label: 'Roll',  value: deviceState.imu.roll,  color: 'text-purple-300' },
+              { label: 'Yaw',   value: deviceState.imu.yaw,   color: 'text-cyan-300' },
+            ].map(({ label, value, color }) => (
+              <div key={label} className="flex flex-col items-center gap-2">
+                <p className={`text-[9px] uppercase font-bold tracking-widest ${color} opacity-60`}>{label}</p>
+                <p className={`font-mono text-3xl font-light ${color}`}>
+                  {value.toFixed(1)}°
+                </p>
+                {/* Mini bar showing angle as a filled bar from center */}
+                <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
+                  <div
+                    className={`h-full rounded-full transition-all duration-100 ${color.replace('text-', 'bg-')}`}
+                    style={{
+                      width: `${Math.min(100, Math.abs(value) / 90 * 100)}%`,
+                      marginLeft: value < 0 ? 'auto' : undefined,
+                    }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
       {/* Last Event Panel */}
       <div className="p-8 bg-[#000066] rounded-[40px] shadow-2xl relative overflow-hidden">
         <div className="absolute inset-0 opacity-5 pointer-events-none">
@@ -144,7 +188,6 @@ export const Dashboard: React.FC<DashboardProps> = ({
               {deviceState.lastEvent ?? 'Waiting'}
             </div>
           </div>
-
           <div className="flex items-center justify-center py-4">
             <p className="text-white/30 text-sm font-mono">
               {deviceState.connected
@@ -152,7 +195,6 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 : 'Connect device to see events'}
             </p>
           </div>
-
           <div className="flex justify-center pt-2">
             <button
               onClick={onTriggerClick}
@@ -174,21 +216,21 @@ export const Dashboard: React.FC<DashboardProps> = ({
           <p className="text-blue-200/40 text-[10px] font-mono uppercase tracking-[0.4em] mb-6">Spatial Movement Translation</p>
           <div className="flex items-center justify-center gap-12">
             <div className="text-left">
-              <p className="text-blue-300/30 text-[9px] uppercase font-bold tracking-widest">X-Axis</p>
-              <p className="text-white font-mono text-3xl font-light">{deviceState.movement.x.toFixed(2)}</p>
+              <p className="text-blue-300/30 text-[9px] uppercase font-bold tracking-widest">Roll</p>
+              <p className="text-white font-mono text-3xl font-light">{deviceState.imu.roll.toFixed(1)}°</p>
             </div>
             <div className="w-px h-12 bg-white/10" />
             <div className="text-left">
-              <p className="text-blue-300/30 text-[9px] uppercase font-bold tracking-widest">Y-Axis</p>
-              <p className="text-white font-mono text-3xl font-light">{deviceState.movement.y.toFixed(2)}</p>
+              <p className="text-blue-300/30 text-[9px] uppercase font-bold tracking-widest">Pitch</p>
+              <p className="text-white font-mono text-3xl font-light">{deviceState.imu.pitch.toFixed(1)}°</p>
             </div>
           </div>
           <p className="mt-8 text-[10px] text-blue-200/30 max-w-[250px] mx-auto leading-relaxed">
-            * Real-time spatial data is translated into 2D coordinates for virtual cursor control.
+            * Real-time IMU angles translated into 2D cursor movement.
           </p>
         </div>
         <motion.div
-          animate={{ x: deviceState.movement.x, y: deviceState.movement.y }}
+          animate={{ x: dotX, y: dotY }}
           transition={{ type: 'spring', damping: 25, stiffness: 120 }}
           className="absolute w-6 h-6 bg-white rounded-full shadow-[0_0_30px_rgba(255,255,255,0.4)] border-2 border-blue-200 pointer-events-none"
         />
