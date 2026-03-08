@@ -62,8 +62,8 @@ export const Dashboard: React.FC<DashboardProps> = ({
               <Target className="w-8 h-8 text-white" />
             </div>
             <p className="text-sm font-semibold text-[#000066] uppercase tracking-widest mb-4">Baseline</p>
-            <p className={`text-2xl font-bold ${deviceState.baselineSet ? 'text-green-600' : 'text-red-600'}`}>
-              {deviceState.baselineSet ? 'SET' : 'NOT SET'}
+            <p className={`text-2xl font-bold ${deviceState.baselineSet || deviceState.powerOn ? 'text-green-600' : 'text-red-600'}`}>
+              {deviceState.baselineSet ? 'SET' : deviceState.powerOn ? 'LOCKED' : 'NOT SET'}
             </p>
             <p className="mt-4 text-[10px] text-[#000066]/60 italic">
               Double click device button to zero IMU
@@ -126,7 +126,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
               {deviceState.powerOn ? 'JOLT' : 'Disconnected'}
             </p>
             <p className="mt-4 text-[10px] font-bold text-[#000066]/60 uppercase tracking-tighter">
-              {deviceState.connected ? 'Click to disconnect' : 'Click to connect'}
+              {deviceState.powerOn ? 'Connected' : 'Click to connect'}
             </p>
           </button>
         </div>
