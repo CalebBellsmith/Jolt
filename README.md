@@ -8,7 +8,7 @@
 
 ## What is JOLT?
 
-JOLT is a forearm band that allows users with upper limb amputations or impairments to control a computer mouse using natural arm gestures. By strapping JOLT to the residual limb, users can move the cursor by tilting their arm, click with a joystick button, and toggle their range of motion and sensititivy. 
+JOLT is a forearm band that allows users with upper limb amputations or impairments to control a computer mouse using natural arm gestures. By strapping JOLT to the residual limb, users can move the cursor by tilting their arm, click with a joystick button, and toggle their range of motion and sensitivity. 
 ---
 
 ## Demo
