@@ -8,8 +8,7 @@
 
 ## What is JOLT?
 
-JOLT is a wearable forearm band that allows users with upper-limb amputations to control a computer mouse using natural arm gestures. By strapping JOLT to the residual limb, users can move the cursor by tilting their arm, click with a joystick button, and freeze/unfreeze cursor movement with a toggle switch — no hand required.
-
+JOLT is a wearable forearm band that allows users with upper-limb amputations and impairments to control a computer mouse using natural arm gestures. By strapping JOLT to the residual limb, users can move the cursor by tilting their arm, click with a joystick button, and toggle their range of motion and sensititivy. 
 ---
 
 ## Demo
@@ -20,7 +19,7 @@ JOLT is a wearable forearm band that allows users with upper-limb amputations to
 
 ## How It Works
 
-JOLT uses an **IMU (Inertial Measurement Unit)** to detect the rotational velocity of the forearm in real time. These gyroscope readings are filtered and mapped to cursor movement, which is transmitted wirelessly to any computer via **Bluetooth HID** — the same protocol used by commercial wireless mice. The computer sees JOLT as a standard Bluetooth mouse, requiring no drivers or software installation.
+JOLT uses an gyroscope to detect the rotational velocity of the forearm in real time. These gyroscope readings are filtered and mapped to cursor movement, which is transmitted wirelessly to any computer via Bluetooth HID. The computer sees JOLT as a standard Bluetooth mouse, requiring no drivers or software installation.
 
 ### Cursor Control
 - **Tilt arm forward/back** → moves cursor up/down
@@ -94,6 +93,7 @@ JOLT includes a web-based dashboard accessible from any Chrome or Edge browser. 
 - [Vite](https://vitejs.dev/)
 - [Framer Motion](https://www.framer.com/motion/)
 - [Vercel](https://vercel.com/)
+- [Google AI Studio]
 
 ---
 
