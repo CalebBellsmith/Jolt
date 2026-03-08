@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { Bluetooth, Battery, Power, Target, ChevronDown, User, Activity, Compass } from 'lucide-react';
+import { Bluetooth, Battery, Power, Target, ChevronDown, User, Compass, SlidersHorizontal } from 'lucide-react';
 import { HumanOutline } from './HumanOutline';
 import { BluetoothDeviceState } from '../hooks/useBluetooth';
 import { Logo } from './Logo';
@@ -11,6 +11,7 @@ interface DashboardProps {
   onConnect: () => void;
   onDisconnect: () => void;
   onTriggerClick?: () => void;
+  onSetSensitivity?: (value: number) => void;
 }
 
 export const Dashboard: React.FC<DashboardProps> = ({
@@ -19,8 +20,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
   onConnect,
   onDisconnect,
   onTriggerClick,
+  onSetSensitivity,
 }) => {
   const [selectedPart, setSelectedPart] = useState('bicep');
+  const [sensitivity, setSensitivity] = useState(5);
 
   const bodyParts = [
     { id: 'default', label: 'Select as default' },
@@ -32,6 +35,11 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
   const dotX = Math.max(-80, Math.min(80, deviceState.imu.roll  * 1.5));
   const dotY = Math.max(-80, Math.min(80, deviceState.imu.pitch * 1.5));
+
+  const handleSensitivityChange = (val: number) => {
+    setSensitivity(val);
+    onSetSensitivity?.(val);
+  };
 
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-16">
@@ -171,67 +179,43 @@ export const Dashboard: React.FC<DashboardProps> = ({
         </div>
       </div>
 
-      {/* Last Event Panel */}
+      {/* Sensitivity Panel */}
       <div className="p-8 bg-[#000066] rounded-[40px] shadow-2xl relative overflow-hidden">
         <div className="absolute inset-0 opacity-5 pointer-events-none">
           <div className="w-full h-full" style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
         </div>
         <div className="relative z-10 space-y-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Activity className="w-5 h-5 text-blue-300" />
-              <p className="text-blue-200/60 text-[10px] font-mono uppercase tracking-[0.4em]">Device Events</p>
-            </div>
-            <div className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${deviceState.lastEvent ? 'bg-green-500 text-white' : 'bg-white/10 text-white/40'}`}>
-              {deviceState.lastEvent ?? 'Waiting'}
+          <div className="flex items-center gap-3">
+            <SlidersHorizontal className="w-5 h-5 text-blue-300" />
+            <p className="text-blue-200/60 text-[10px] font-mono uppercase tracking-[0.4em]">Cursor Sensitivity</p>
+            <div className={`ml-auto px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${deviceState.connected ? 'bg-green-500 text-white' : 'bg-white/10 text-white/40'}`}>
+              {deviceState.connected ? 'Active' : 'Offline'}
             </div>
           </div>
-          <div className="flex items-center justify-center py-4">
-            <p className="text-white/30 text-sm font-mono">
-              {deviceState.connected
-                ? 'Single click = mouse click, Double click = zero IMU'
-                : 'Connect device to see events'}
+          <div className="flex flex-col items-center gap-6">
+            <p className="text-white font-mono text-5xl font-light">{sensitivity}<span className="text-white/30 text-2xl ml-1">/ 10</span></p>
+            <div className="w-full flex items-center gap-4">
+              <span className="text-white/30 text-[10px] font-mono uppercase">Low</span>
+              <input
+                type="range"
+                min={1}
+                max={10}
+                step={1}
+                value={sensitivity}
+                onChange={(e) => handleSensitivityChange(Number(e.target.value))}
+                disabled={!deviceState.connected}
+                className="flex-1 h-2 appearance-none rounded-full cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                style={{
+                  background: `linear-gradient(to right, #3b82f6 ${(sensitivity - 1) / 9 * 100}%, rgba(255,255,255,0.1) ${(sensitivity - 1) / 9 * 100}%)`,
+                }}
+              />
+              <span className="text-white/30 text-[10px] font-mono uppercase">High</span>
+            </div>
+            <p className="text-[10px] text-blue-200/30 italic">
+              Sends value to ESP32 over BLE — scale your IMU multiplier on the device side
             </p>
           </div>
-          <div className="flex justify-center pt-2">
-            <button
-              onClick={onTriggerClick}
-              disabled={!deviceState.connected}
-              className="px-6 py-2 bg-white/10 hover:bg-white/20 disabled:opacity-30 disabled:cursor-not-allowed text-white text-xs font-bold uppercase tracking-widest rounded-full transition-all"
-            >
-              Test Click Manually
-            </button>
-          </div>
         </div>
-      </div>
-
-      {/* Spatial Movement Panel */}
-      <div className="p-10 bg-[#000066] rounded-[40px] shadow-2xl relative overflow-hidden min-h-[250px] flex items-center justify-center">
-        <div className="absolute inset-0 opacity-5 pointer-events-none">
-          <div className="w-full h-full" style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
-        </div>
-        <div className="text-center z-10">
-          <p className="text-blue-200/40 text-[10px] font-mono uppercase tracking-[0.4em] mb-6">Spatial Movement Translation</p>
-          <div className="flex items-center justify-center gap-12">
-            <div className="text-left">
-              <p className="text-blue-300/30 text-[9px] uppercase font-bold tracking-widest">Roll</p>
-              <p className="text-white font-mono text-3xl font-light">{deviceState.imu.roll.toFixed(1)}°</p>
-            </div>
-            <div className="w-px h-12 bg-white/10" />
-            <div className="text-left">
-              <p className="text-blue-300/30 text-[9px] uppercase font-bold tracking-widest">Pitch</p>
-              <p className="text-white font-mono text-3xl font-light">{deviceState.imu.pitch.toFixed(1)}°</p>
-            </div>
-          </div>
-          <p className="mt-8 text-[10px] text-blue-200/30 max-w-[250px] mx-auto leading-relaxed">
-            * Real-time IMU angles translated into 2D cursor movement.
-          </p>
-        </div>
-        <motion.div
-          animate={{ x: dotX, y: dotY }}
-          transition={{ type: 'spring', damping: 25, stiffness: 120 }}
-          className="absolute w-6 h-6 bg-white rounded-full shadow-[0_0_30px_rgba(255,255,255,0.4)] border-2 border-blue-200 pointer-events-none"
-        />
       </div>
     </div>
   );
