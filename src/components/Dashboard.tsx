@@ -30,7 +30,6 @@ export const Dashboard: React.FC<DashboardProps> = ({
     { id: 'thigh',   label: 'Thigh' },
   ];
 
-  // Clamp dot position to stay within the panel
   const dotX = Math.max(-80, Math.min(80, deviceState.imu.roll  * 1.5));
   const dotY = Math.max(-80, Math.min(80, deviceState.imu.pitch * 1.5));
 
@@ -119,12 +118,12 @@ export const Dashboard: React.FC<DashboardProps> = ({
             onClick={() => { if (deviceState.connected) onDisconnect(); else onConnect(); }}
             className="group relative pt-10 pb-8 px-6 bg-[#d9e6ff] rounded-[32px] shadow-sm flex flex-col items-center text-center w-full transition-all hover:shadow-md active:scale-[0.98]"
           >
-            <div className={`absolute -top-8 left-1/2 -translate-x-1/2 w-16 h-16 rounded-full flex items-center justify-center shadow-lg transition-colors ${deviceState.connected ? 'bg-blue-500' : 'bg-[#000066]'}`}>
+            <div className={`absolute -top-8 left-1/2 -translate-x-1/2 w-16 h-16 rounded-full flex items-center justify-center shadow-lg transition-colors ${deviceState.powerOn ? 'bg-blue-500' : 'bg-[#000066]'}`}>
               <Bluetooth className="w-8 h-8 text-white" />
             </div>
             <p className="text-sm font-semibold text-[#000066] uppercase tracking-widest mb-4">Bluetooth</p>
-            <p className={`text-lg font-bold truncate w-full px-2 ${deviceState.connected ? 'text-blue-600' : 'text-[#000066]/40'}`}>
-              {deviceState.connected ? deviceState.deviceName : 'Disconnected'}
+            <p className={`text-lg font-bold truncate w-full px-2 ${deviceState.powerOn ? 'text-blue-600' : 'text-[#000066]/40'}`}>
+              {deviceState.powerOn ? 'JOLT' : 'Disconnected'}
             </p>
             <p className="mt-4 text-[10px] font-bold text-[#000066]/60 uppercase tracking-tighter">
               {deviceState.connected ? 'Click to disconnect' : 'Click to connect'}
@@ -157,7 +156,6 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 <p className={`font-mono text-3xl font-light ${color}`}>
                   {value.toFixed(1)}°
                 </p>
-                {/* Mini bar showing angle as a filled bar from center */}
                 <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
                   <div
                     className={`h-full rounded-full transition-all duration-100 ${color.replace('text-', 'bg-')}`}
