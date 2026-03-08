@@ -42,7 +42,7 @@ JOLT uses an gyroscope to detect the rotational velocity of the forearm in real 
 | ESP32 Dev Module | Microcontroller and BLE HID transmission |
 | MPU-6050 IMU | Gyroscope for arm gesture detection |
 | Joystick module | Single click input |
-| Toggle switch | Freeze/unfreeze cursor movement |
+| Toggle switch | Freeze and unfreeze cursor movement |
 | Portable USB charger | Power supply |
 | Breadboard + jumper wires | Prototyping and connections |
 
@@ -50,13 +50,13 @@ JOLT uses an gyroscope to detect the rotational velocity of the forearm in real 
 
 ## Technical Details
 
-- **Microcontroller:** ESP32 (dual core, 240MHz)
-- **Gesture sensing:** MPU-6050 gyroscope at 131 LSB/°/s sensitivity
-- **Signal filtering:** Low-pass filter (α = 0.8) to smooth gyroscope noise
-- **Wireless protocol:** Bluetooth Low Energy HID (Human Interface Device)
-- **Cursor mapping:** Gyro rate (°/s) scaled and constrained to ±15 pixels per frame at 50Hz
-- **Auto-calibration:** IMU settles over first 50 loop iterations on boot before cursor activates
-- **Companion web app:** Real-time device dashboard built in React + TypeScript, deployed on Vercel
+- **Microcontroller:** ESP32 (dual core, 240MHz).
+- **Gesture sensing:** MPU-6050 gyroscope.
+- **Signal filtering:** Low-pass filter to smooth gyroscope noise.
+- **Wireless protocol:** Bluetooth Low Energy HID.
+- **Cursor mapping:** Gyro rate scaled and constrained to ±15 pixels per frame at 50Hz.
+- **Auto-calibration:** IMU settles over first 50 loop iterations on boot before cursor activates.
+- **Companion web app:** Real time device dashboard built in React and TypeScript, deployed on Vercel
 
 ---
 
