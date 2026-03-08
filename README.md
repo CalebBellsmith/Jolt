@@ -93,10 +93,5 @@ JOLT includes a web-based dashboard accessible from any Chrome or Edge browser. 
 - [Vite](https://vitejs.dev/)
 - [Framer Motion](https://www.framer.com/motion/)
 - [Vercel](https://vercel.com/)
-- [Google AI Studio]
+- [Google AI Studio](https://aistudio.google.com/)
 
----
-
-## Team
-
-Built at the University of Waterloo.
