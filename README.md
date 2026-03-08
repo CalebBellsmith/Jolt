@@ -69,7 +69,7 @@ JOLT includes a web-based dashboard accessible from any Chrome or Edge browser. 
 - Live gyroscope values
 - Spatial movement visualization
 
-🌐 [![Launch Dashboard](https://img.shields.io/badge/▶%20See%20Demo-000000?style=for-the-badge&logoColor=white)](https://jolt-dusky.vercel.app/)
+[![Launch Dashboard](https://img.shields.io/badge/See%20Demo-%23FF4500?style=for-the-badge)](https://jolt-dusky.vercel.app/)
 
 ---
 
